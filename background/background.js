@@ -1,17 +1,33 @@
 // Background service worker for Unfucktard
 
-// Initialize default storage on install
+// Import the prebuilt suggestions list
+importScripts('../popup/suggestions.js');
+
+// Initialize default storage and auto-apply suggestions
 chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    chrome.storage.sync.set({
-      blockedChannels: [],
-      isEnabled: true,
-      stats: {
-        totalBlocked: 0,
-        sessionBlocked: 0
+  if (details.reason === 'install' || details.reason === 'update') {
+    chrome.storage.sync.get(['blockedChannels', 'isEnabled', 'stats'], (data) => {
+      let existingChannels = data.blockedChannels || [];
+      let defaultChannels = [];
+
+      // Extract all keywords from our prebuilt suggestion DB
+      if (typeof SUGGESTED_FUCKTARDS !== 'undefined') {
+        SUGGESTED_FUCKTARDS.forEach(s => {
+          defaultChannels.push(...s.keywords);
+        });
       }
+
+      // Normalize and deduplicate everything
+      let normalizedDefaults = defaultChannels.map(normalizeInput).filter(c => c);
+      let mergedChannels = [...new Set([...existingChannels, ...normalizedDefaults])];
+
+      chrome.storage.sync.set({
+        blockedChannels: mergedChannels,
+        isEnabled: data.isEnabled !== false, // Default true
+        stats: data.stats || { totalBlocked: 0, sessionBlocked: 0 }
+      });
+      console.log('[Unfucktard] Integrated auto-suggestions into blocklist.');
     });
-    console.log('[Unfucktard] Extension installed. Ready to clean your feed.');
   }
 });
 
@@ -68,7 +84,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.sync.get(['blockedChannels'], (data) => {
       const channels = data.blockedChannels || [];
       let added = false;
-      
+
       const newChannels = message.channels || [];
       newChannels.forEach(ch => {
         const channelName = normalizeInput(ch);
@@ -77,7 +93,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           added = true;
         }
       });
-      
+
       if (added) {
         chrome.storage.sync.set({ blockedChannels: channels }, () => {
           notifyAllYouTubeTabs({ type: 'BLOCKLIST_UPDATED', channels });
