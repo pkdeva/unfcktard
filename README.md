@@ -32,6 +32,9 @@ A Chrome extension that blocks YouTube videos from specific channels. Clean up y
 4. The channel is now blocked — videos from that channel will be hidden on YouTube
 
 ### Quick Block (on YouTube)
+
+![alt text](icons/image.png)
+
 1. Hover over any video on YouTube
 2. A small 🚫 button appears next to the channel name
 3. Click it to instantly add that channel to your blocklist

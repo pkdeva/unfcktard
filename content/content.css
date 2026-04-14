@@ -116,46 +116,57 @@
   }
 }
 
-/* Quick-block button injected next to channel names */
+/* Quick-block overlay button hovering on top right of video */
 .unfucktard-quick-block {
+  position: absolute;
+  top: 8px;
+  right: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  margin-left: 6px;
+  width: 26px;
+  height: 26px;
   border: none;
   border-radius: 50%;
-  background: transparent;
+  background: rgba(12, 12, 20, 0.7);
   cursor: pointer;
   opacity: 0;
-  transition: all 0.2s ease;
-  vertical-align: middle;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0;
-  position: relative;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .unfucktard-quick-block svg {
   width: 14px;
   height: 14px;
-  fill: #aaa;
-  transition: fill 0.2s ease;
+  fill: #fff;
+  transition: fill 0.2s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .unfucktard-quick-block:hover {
-  background: rgba(233, 69, 96, 0.15);
+  background: rgba(233, 69, 96, 0.95);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .unfucktard-quick-block:hover svg {
-  fill: #e94560;
+  fill: #fff;
 }
 
-/* Show quick-block button on video hover */
+/* Show quick-block button on video parent hover */
 ytd-rich-item-renderer:hover .unfucktard-quick-block,
 ytd-video-renderer:hover .unfucktard-quick-block,
 ytd-compact-video-renderer:hover .unfucktard-quick-block,
 ytd-grid-video-renderer:hover .unfucktard-quick-block,
-ytd-reel-item-renderer:hover .unfucktard-quick-block {
+ytd-reel-item-renderer:hover .unfucktard-quick-block,
+yt-lockup-view-model:hover .unfucktard-quick-block,
+ytm-shorts-lockup-view-model:hover .unfucktard-quick-block,
+ytd-shorts-lockup-view-model:hover .unfucktard-quick-block {
   opacity: 1;
 }
 

@@ -483,30 +483,32 @@
   function injectQuickBlockButton(videoElement) {
     if (videoElement.querySelector('.unfucktard-quick-block')) return;
 
-    const channelNameEl = videoElement.querySelector('ytd-channel-name');
-    if (!channelNameEl) return;
-
-    const channelName = getChannelName(videoElement);
+    // Get the best available keyword for the block operation
+    const channelName = getChannelName(videoElement) || getChannelHandle(videoElement);
     if (!channelName) return;
 
     const btn = document.createElement('button');
     btn.className = 'unfucktard-quick-block';
-    btn.title = `Block "${channelName}" with Unfucktard`;
-    btn.innerHTML = BAN_SVG;
+    btn.title = `Block "${channelName}" with unfcktard`;
+    btn.innerHTML = typeof BAN_SVG !== 'undefined' ? BAN_SVG : SHIELD_SVG;
 
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
 
-      const result = await sendMessage({ type: 'ADD_CHANNEL', channel: channelName });
+      const result = await sendMessage({ type: 'ADD_CHANNELS', channels: [channelName] });
       if (result && result.success) {
         blockedKeywords = buildKeywords(result.channels);
-        showToast(`Fucktard "${channelName}" blocked`);
+        showToast(`Target ignored: "${channelName}"`);
         resetAndRescan();
       }
     });
 
-    channelNameEl.appendChild(btn);
+    if (window.getComputedStyle(videoElement).position === 'static') {
+      videoElement.style.position = 'relative';
+    }
+
+    videoElement.appendChild(btn);
   }
 
   // ——— Channel Page Blocking ———
