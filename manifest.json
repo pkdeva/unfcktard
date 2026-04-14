@@ -3,8 +3,13 @@
   "name": "unfcktard",
   "version": "1.0.0",
   "description": "Block YouTube videos from specific channels. Clean up your feed.",
-  "permissions": ["storage", "activeTab"],
-  "host_permissions": ["*://*.youtube.com/*"],
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
@@ -20,9 +25,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
-      "js": ["content/content.js"],
-      "css": ["content/content.css"],
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "css": [
+        "content/content.css"
+      ],
       "run_at": "document_idle"
     }
   ],
