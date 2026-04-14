@@ -13,6 +13,7 @@
   let blockedCount = 0;
   let observer = null;
   let scanTimeout = null;
+  let sessionBlockedLog = []; // tracks what was blocked on current page
 
   // ——— Initialization ———
 
@@ -84,6 +85,9 @@
         stopObserver();
       }
     }
+    if (message.type === 'GET_SESSION_BLOCKED_VIDEOS') {
+      sendResponse({ log: sessionBlockedLog });
+    }
   });
 
   // ——— Keyword Matching ———
@@ -148,6 +152,37 @@
     'ytd-horizontal-card-list-renderer',  // Horizontal card rows
     'ytd-vertical-list-renderer'          // Vertical list sections
   ].join(', ');
+
+  // ---- Advanced Media Extraction Component ----
+  // Specifically bypasses deferred image src logic to find hard URLs
+  function extractMediaInfo(videoElement) {
+    let url = null;
+    let videoId = null;
+    let thumbnailUrl = null;
+
+    const links = videoElement.querySelectorAll('a#video-title, a#thumbnail, a.ytd-thumbnail, a.yt-simple-endpoint, a[href*="/watch?v="], a[href*="/shorts/"]');
+    for (const a of links) {
+      if (a.href && (a.href.includes('/watch?v=') || a.href.includes('/shorts/'))) {
+        url = a.href;
+        break;
+      }
+    }
+
+    if (url) {
+      let match = url.match(/\/watch\?v=([a-zA-Z0-9_-]+)/);
+      if (match) videoId = match[1];
+      else {
+        match = url.match(/\/shorts\/([a-zA-Z0-9_-]+)/);
+        if (match) videoId = match[1];
+      }
+    }
+
+    if (videoId) {
+      thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
+    }
+
+    return { url, videoId, thumbnailUrl };
+  }
 
   // ---- Channel name extraction selectors (tried in order) ----
   const CHANNEL_NAME_SELECTORS = [
@@ -454,6 +489,17 @@
     videoElement.setAttribute('data-unfucktard-processed', 'blocked');
     videoElement.classList.add('unfucktard-hidden');
 
+    const mediaInfo = extractMediaInfo(videoElement);
+
+    sessionBlockedLog.unshift({
+      title: matchInfo.source || 'Unknown Video',
+      keyword: matchInfo.keyword,
+      type: matchInfo.type,
+      time: Date.now(),
+      url: mediaInfo.url,
+      thumbnail: mediaInfo.thumbnailUrl
+    });
+
     const placeholder = createBlockedPlaceholder(matchInfo, videoElement);
     videoElement.parentNode.insertBefore(placeholder, videoElement);
 
@@ -472,6 +518,13 @@
 
     sectionElement.setAttribute('data-unfucktard-processed', 'blocked');
     sectionElement.classList.add('unfucktard-hidden');
+
+    sessionBlockedLog.unshift({
+      title: `Section: ${matchInfo.source}`,
+      keyword: matchInfo.keyword,
+      type: matchInfo.type,
+      time: Date.now()
+    });
 
     const placeholder = createSectionPlaceholder(matchInfo, sectionElement);
     sectionElement.parentNode.insertBefore(placeholder, sectionElement);

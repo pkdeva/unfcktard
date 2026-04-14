@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function addSuggestion(suggestion) {
     // Add all keywords from the suggestion using the safe plural endpoint
     const toAdd = [...new Set(suggestion.keywords)];
-    
+
     chrome.runtime.sendMessage({ type: 'ADD_CHANNELS', channels: toAdd }, (response) => {
       // response.channels is the updated list
       if (response && response.channels) {
@@ -308,17 +308,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // ——— Data Loading ———
 
   function loadData() {
-    chrome.storage.sync.get(['blockedChannels', 'isEnabled', 'stats'], (data) => {
-      channels = data.blockedChannels || [];
-      const isEnabled = data.isEnabled !== false;
-      const stats = data.stats || { totalBlocked: 0 };
+    chrome.storage.sync.get(['blockedChannels', 'isEnabled'], (syncData) => {
+      chrome.storage.local.get(['stats'], (localData) => {
+        channels = syncData.blockedChannels || [];
+        const isEnabled = syncData.isEnabled !== false;
+        const stats = localData.stats || { totalBlocked: 0 };
 
-      elements.toggle.checked = isEnabled;
-      elements.totalBlocked.textContent = formatNumber(stats.totalBlocked || 0);
-      updateDisabledState(isEnabled);
-      renderChannelList();
-      updateStats();
-      renderSuggestions();
+        elements.toggle.checked = isEnabled;
+        elements.totalBlocked.textContent = formatNumber(stats.totalBlocked || 0);
+        updateDisabledState(isEnabled);
+        renderChannelList();
+        updateStats();
+        renderSuggestions();
+      });
     });
   }
 
@@ -386,6 +388,115 @@ document.addEventListener('DOMContentLoaded', () => {
       elements.channelList.appendChild(item);
     });
   }
+
+  // ——— Blocked Videos Live Log Modal ———
+  const statBox = document.getElementById('hiddenVideosStatBox');
+  const modal = document.getElementById('blockedLogModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const logList = document.getElementById('blockedLogList');
+  const logEmptyState = document.getElementById('blockedLogEmpty');
+
+  function renderLogModal(logItems = []) {
+    logList.innerHTML = '';
+
+    if (!logItems || logItems.length === 0) {
+      logEmptyState.style.display = 'flex';
+      return;
+    }
+    logEmptyState.style.display = 'none';
+
+    logItems.forEach(item => {
+      // Use an anchor tag if we successfully extracted a URL, else standard div
+      const ElementTag = item.url ? 'a' : 'div';
+      const li = document.createElement(ElementTag);
+      li.className = 'blocked-log-item';
+
+      if (item.url) {
+        li.href = item.url;
+        li.target = '_blank';
+        li.rel = 'noopener noreferrer';
+      }
+
+      const timeAgo = Math.floor((Date.now() - item.time) / 1000);
+      let timeStr = 'Just now';
+      if (timeAgo > 60) {
+        timeStr = `${Math.floor(timeAgo / 60)}m ago`;
+      }
+
+      let thumbnailHtml = '';
+      if (item.thumbnail) {
+        thumbnailHtml = `
+          <div class="log-item-thumbnail">
+            <img src="${item.thumbnail}" alt="Thumbnail" loading="lazy" />
+          </div>
+        `;
+      } else {
+        thumbnailHtml = `
+          <div class="log-item-thumbnail placeholder-thumb">
+             <svg viewBox="0 0 24 24" width="16" height="16" fill="rgba(255,255,255,0.2)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5l-4-4 1.41-1.41L11 13.67l5.59-5.59L18 9.5l-7 7z"/></svg>
+          </div>
+        `;
+      }
+
+      li.innerHTML = `
+        ${thumbnailHtml}
+        <div class="log-item-content">
+          <div class="log-item-header">
+            <span class="log-item-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</span>
+          </div>
+          <div class="log-item-meta">
+            <span class="log-item-keyword">Trigger: ${escapeHtml(item.keyword)}</span>
+            <span class="log-item-time">${timeStr}</span>
+          </div>
+        </div>
+      `;
+      logList.appendChild(li);
+    });
+  }
+
+  statBox.addEventListener('click', () => {
+    modal.classList.add('show');
+    logList.innerHTML = '<li class="blocked-log-empty">Fetching active session log...</li>';
+    logEmptyState.style.display = 'none';
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs || !tabs[0] || !tabs[0].url.includes('youtube.com')) {
+        renderLogModal([]);
+        return;
+      }
+
+      chrome.tabs.sendMessage(tabs[0].id, { type: 'GET_SESSION_BLOCKED_VIDEOS' }, (response) => {
+        if (chrome.runtime.lastError) {
+          logList.innerHTML = `
+            <li class="blocked-log-empty" style="flex-direction: column; gap: 8px;">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="var(--accent)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              <strong>Extension Updated!</strong>
+              <span style="font-size: 11px;">Please hard-refresh your YouTube tab (Cmd+R / F5) to load the new Live Log engine on this page.</span>
+            </li>
+          `;
+          return;
+        }
+        
+        if (!response || !response.log) {
+          renderLogModal([]);
+        } else {
+          renderLogModal(response.log);
+        }
+      });
+    });
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    modal.classList.remove('show');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (modal.classList.contains('show')) {
+      if (!modal.contains(e.target) && !statBox.contains(e.target)) {
+        modal.classList.remove('show');
+      }
+    }
+  });
 
   // ——— Utilities ———
 

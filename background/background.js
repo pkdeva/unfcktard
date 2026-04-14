@@ -161,10 +161,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'INCREMENT_BLOCKED') {
-    chrome.storage.sync.get(['stats'], (data) => {
+    chrome.storage.local.get(['stats'], (data) => {
       const stats = data.stats || { totalBlocked: 0 };
       stats.totalBlocked = (stats.totalBlocked || 0) + (message.count || 1);
-      chrome.storage.sync.set({ stats });
+      chrome.storage.local.set({ stats });
     });
   }
 });
