@@ -1,8 +1,8 @@
-# Unfcktard 🛡️
+# Unfcktard ![alt text](icons/icon16.png)
 
 A Chrome extension that blocks YouTube videos from specific channels. Clean up your feed, eliminate noise, take back control.
 
-![alt text](image-3.png)
+![alt text](icons/image-3.png)
 
 ## Features
 
@@ -67,8 +67,4 @@ unfucktard/
 4. If the channel matches any entry in the blocklist, the video is hidden and replaced with a subtle placeholder
 5. YouTube's SPA navigation triggers a re-scan via the `yt-navigate-finish` event
 
-![alt text](image-2.png)
-
-## License
-
-MIT
+![alt text](icons/image-2.png)
