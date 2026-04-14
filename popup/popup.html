@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unfucktard</title>
+  <title>unfcktard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,17 +11,17 @@
 </head>
 <body>
   <div class="popup-container">
+    <!-- Aesthetic Banner -->
+    <div class="brand-banner">
+      <span class="banner-gradient">unfcktard</span> yourself
+    </div>
+
     <!-- Header -->
     <header class="popup-header">
       <div class="header-left">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1 14.5l-4-4 1.41-1.41L11 13.67l5.59-5.59L18 9.5l-7 7z"/>
-          </svg>
-        </div>
         <div class="header-text">
-          <h1 class="header-title">Unfucktard</h1>
-          <p class="header-subtitle">YouTube Fucktard Blocker</p>
+          <h1 class="header-title">unfcktard</h1>
+          <p class="header-subtitle">YouTube Feed Purifier</p>
         </div>
       </div>
       <label class="toggle-switch" title="Enable/Disable extension">
@@ -73,7 +73,7 @@
       <!-- Suggestions Section (shown when list is empty or for discovery) -->
       <div id="suggestionsSection" class="suggestions-section">
         <div class="section-header">
-          <h2 class="section-title">Suggested Fucktards</h2>
+          <h2 class="section-title">Suggested Filters</h2>
         </div>
         <div id="suggestionsGrid" class="suggestions-grid">
           <!-- Populated by JS -->
@@ -83,7 +83,7 @@
       <!-- Channel List -->
       <div class="channel-list-section">
         <div class="section-header">
-          <h2 class="section-title">Blocked Fucktards</h2>
+          <h2 class="section-title">Blocked Keywords</h2>
           <button id="clearAllBtn" class="clear-all-btn" title="Clear all">Clear All</button>
         </div>
 
@@ -95,17 +95,33 @@
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="empty-icon">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>
-          <p class="empty-text">No fucktards blocked yet</p>
+          <p class="empty-text">No keywords blocked yet</p>
           <p class="empty-subtext">Pick from suggestions above or type a name to get started.</p>
         </div>
       </div>
     </div>
 
+    </div>
+
     <!-- Footer -->
     <footer class="popup-footer">
-      <span>v1.1.0</span>
-      <span class="footer-dot">•</span>
-      <span>Clean Your Feed</span>
+      <div class="footer-version">v1.2.0</div>
+      <div class="footer-made-by">
+        <span style="margin-right: 6px;">Made by:</span>
+        <div class="footer-socials" style="display: inline-flex; align-items: center; gap: 8px;">
+          <a href="https://x.com/pkdevaa" target="_blank" rel="noopener noreferrer" class="social-link" title="Twitter @pkdevaa" style="color: var(--text-secondary); transition: color 0.2s; display: flex; align-items: center;">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+              <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+            </svg>
+          </a>
+          <span>,</span>
+          <a href="https://github.com/pkdeva/unfcktard" target="_blank" rel="noopener noreferrer" class="social-link" title="View Source on GitHub" style="color: var(--text-secondary); transition: color 0.2s; display: flex; align-items: center;">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
     </footer>
   </div>
 

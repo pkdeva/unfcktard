@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Unfucktard",
+  "name": "unfcktard",
   "version": "1.0.0",
   "description": "Block YouTube videos from specific channels. Clean up your feed.",
   "permissions": ["storage", "activeTab"],

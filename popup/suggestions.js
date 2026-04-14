@@ -15,6 +15,12 @@ const SUGGESTED_FUCKTARDS = [
     keywords: ['Sandeep Maheshwari', 'SandeepSeminars']
   },
   {
+    name: 'Ankur Warikoo',
+    handle: 'AnkurWarikoo',
+    category: 'motivational',
+    keywords: ['Ankur Warikoo', 'AnkurWarikoo']
+  },
+  {
     name: 'Vivek Bindra',
     handle: 'DrVivekBindra',
     category: 'motivational',
