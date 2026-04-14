@@ -1,0 +1,331 @@
+/* Unfucktard - Content Script Styles */
+
+/* Hidden video elements */
+.unfucktard-hidden {
+  display: none !important;
+}
+
+/* Blocked placeholder (shown instead of hidden video) */
+.unfucktard-blocked-placeholder {
+  position: relative;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  margin: 4px 0;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  animation: unfucktard-fadeIn 0.3s ease forwards;
+  overflow: hidden;
+}
+
+.unfucktard-blocked-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.015) 10px,
+    rgba(255, 255, 255, 0.015) 20px
+  );
+  pointer-events: none;
+}
+
+.unfucktard-blocked-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.unfucktard-blocked-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e94560, #c23152);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 12px rgba(233, 69, 96, 0.3);
+}
+
+.unfucktard-blocked-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+.unfucktard-blocked-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.unfucktard-blocked-label {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.2px;
+}
+
+.unfucktard-blocked-channel {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1px;
+}
+
+.unfucktard-blocked-dismiss {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.unfucktard-blocked-dismiss:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes unfucktard-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Quick-block button injected next to channel names */
+.unfucktard-quick-block {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 6px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  vertical-align: middle;
+  padding: 0;
+  position: relative;
+}
+
+.unfucktard-quick-block svg {
+  width: 14px;
+  height: 14px;
+  fill: #aaa;
+  transition: fill 0.2s ease;
+}
+
+.unfucktard-quick-block:hover {
+  background: rgba(233, 69, 96, 0.15);
+}
+
+.unfucktard-quick-block:hover svg {
+  fill: #e94560;
+}
+
+/* Show quick-block button on video hover */
+ytd-rich-item-renderer:hover .unfucktard-quick-block,
+ytd-video-renderer:hover .unfucktard-quick-block,
+ytd-compact-video-renderer:hover .unfucktard-quick-block,
+ytd-grid-video-renderer:hover .unfucktard-quick-block,
+ytd-reel-item-renderer:hover .unfucktard-quick-block {
+  opacity: 1;
+}
+
+/* Toast notification */
+.unfucktard-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 999999;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.unfucktard-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ——— Channel Page Full Overlay ——— */
+.unfucktard-channel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+  background: linear-gradient(135deg, #0a0a14 0%, #0d0d1f 30%, #121230 60%, #0a0a14 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: unfucktard-overlayFadeIn 0.4s ease forwards;
+}
+
+.unfucktard-channel-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(124, 92, 252, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(233, 69, 96, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.unfucktard-channel-overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 1;
+  padding: 40px;
+  max-width: 480px;
+  animation: unfucktard-overlaySlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+
+.unfucktard-channel-overlay-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e94560, #c23152);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  box-shadow:
+    0 8px 32px rgba(233, 69, 96, 0.3),
+    0 0 60px rgba(233, 69, 96, 0.15);
+}
+
+.unfucktard-channel-overlay-icon svg {
+  width: 40px;
+  height: 40px;
+  fill: white;
+}
+
+.unfucktard-channel-overlay-title {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.unfucktard-channel-overlay-channel {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e94560;
+  margin-bottom: 16px;
+  padding: 6px 16px;
+  background: rgba(233, 69, 96, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(233, 69, 96, 0.2);
+}
+
+.unfucktard-channel-overlay-desc {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.unfucktard-channel-overlay-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.unfucktard-overlay-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  letter-spacing: 0.2px;
+}
+
+.unfucktard-overlay-btn-back {
+  background: linear-gradient(135deg, #7c5cfc, #5a3fd6);
+  color: white;
+  box-shadow: 0 4px 16px rgba(124, 92, 252, 0.3);
+}
+
+.unfucktard-overlay-btn-back:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(124, 92, 252, 0.4);
+}
+
+.unfucktard-overlay-btn-unblock {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.unfucktard-overlay-btn-unblock:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+@keyframes unfucktard-overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes unfucktard-overlaySlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
